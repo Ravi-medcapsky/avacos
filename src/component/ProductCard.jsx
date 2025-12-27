@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export default function ProductCard({
   imageSrc = "https://via.placeholder.com/300",
   productName,
@@ -44,7 +46,7 @@ export default function ProductCard({
 
       {/* Button */}
       <button
-        onClick={() => alert("Coming Soon")}
+        onClick={() => toast.success("Comming soon!")}
         className="
           mt-4 w-full bg-green-600 text-white py-2 rounded-lg
           transition-all duration-200

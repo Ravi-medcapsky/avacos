@@ -2,6 +2,7 @@ import React from "react";
 import ProductCard from "./ProductCard";
 import pickleimg from "../assets/images/pickle.png";
 import waterBottle from "../assets/images/waterBottles.png";
+import { toast } from "react-toastify";
 
 const NewArrivalsProduct = () => {
   const productData = [
@@ -38,7 +39,7 @@ const NewArrivalsProduct = () => {
       </div>
       <div className="text-center mt-8">
         <button
-          onClick={() => alert("Not implemented At")}
+          onClick={() => toast.info("Not implemented At")}
           className="border px-6 py-2 rounded-full">
           View All
         </button>

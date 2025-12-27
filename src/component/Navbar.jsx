@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   FiSearch,
   FiShoppingCart,
@@ -8,24 +9,36 @@ import {
   FiChevronDown,
   FiSmartphone,
 } from "react-icons/fi";
-import {
-  FaShippingFast,
-  FaPhone,
-  FaLessThan,
-  FaGreaterThan,
-} from "react-icons/fa";
+import { FaShippingFast } from "react-icons/fa";
+
+/* ---------- PROMO TEXT ---------- */
+const promoTexts = [
+  "Free Shipping above ₹999 🚚",
+  "100% Natural Products 🌿",
+  "Fast Delivery Across India 🇮🇳",
+  "Quality You Can Trust ⭐",
+];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isOpenSearch, setIsOpenSearch] = useState(false);
+  const [promoIndex, setPromoIndex] = useState(0);
   const navRef = useRef(null);
 
   const toggleDropdown = (name) => {
     setOpenDropdown(openDropdown === name ? null : name);
   };
 
-  // Close dropdown & search on outside click
+  /* Promo auto-rotate */
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPromoIndex((prev) => (prev + 1) % promoTexts.length);
+    }, 2500);
+    return () => clearInterval(timer);
+  }, []);
+
+  /* Close on outside click */
   useEffect(() => {
     const handler = (e) => {
       if (navRef.current && !navRef.current.contains(e.target)) {
@@ -39,125 +52,146 @@ const Navbar = () => {
 
   return (
     <>
-      {/* ---------------- TOP BAR ---------------- */}
-      <nav className="bg-green-600 text-white text-xs md:text-sm py-2">
-        <div className="max-w-7xl mx-auto flex flex-wrap md:flex-nowrap items-center justify-between px-4 gap-2">
+      {/* ---------- TOP BAR ---------- */}
+      <nav className="bg-green-600 text-white text-xs py-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <FaShippingFast className="text-lg" />
+            <FaShippingFast />
             <span className="font-medium">AVACOS Stores</span>
           </div>
 
-          <div className="hidden md:flex items-center gap-10">
-            <FaLessThan />
-            <span>Free shipping on orders above ₹999</span>
-            <FaGreaterThan />
+          <div
+            key={promoIndex}
+            className="hidden md:block font-medium animate-fade-in">
+            {promoTexts[promoIndex]}
           </div>
 
           <div className="flex items-center gap-2">
             <FiSmartphone />
-            <a href="tel:+919839526180" className="hover:underline">
-              +91 98395 26180
+            <a href="tel:+919922117866" className="hover:underline">
+              +91 99221 17866
             </a>
           </div>
         </div>
       </nav>
 
-      {/* ---------------- MAIN NAVBAR ---------------- */}
-      <header ref={navRef} className="border-b bg-white sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
-          {/* LOGO */}
-          <h1 className="text-2xl font-bold">AVACOS</h1>
+      {/* ---------- MAIN NAV ---------- */}
+      <header ref={navRef} className="sticky top-0 z-50 bg-white border-b">
+        <div className="max-w-7xl mx-auto flex justify-between items-center p-4">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="text-2xl font-bold hover:text-green-600 transition">
+            AVACOS
+          </Link>
 
-          {/* DESKTOP MENU */}
-          <nav className="hidden md:flex gap-8 items-center text-sm">
+          {/* Desktop Menu */}
+          <nav className="hidden md:flex gap-8 text-sm">
+            <Link to="/" className="hover:text-green-600">
+              Home
+            </Link>
+
             <Dropdown
               label="Shop By Category"
               open={openDropdown === "category"}
-              onClick={() => toggleDropdown("category")}
-            >
-              <DropdownItem label="All Products" />
-              <DropdownItem label="Fruits & Vegetables" />
-              <DropdownItem label="Dairy Products" />
-              <DropdownItem label="Snacks" />
+              onClick={() => toggleDropdown("category")}>
+              <DropdownItem to="/products">All Products</DropdownItem>
+              <DropdownItem to="/category/fruits">
+                Fruits & Vegetables
+              </DropdownItem>
+              <DropdownItem to="/category/dairy">Dairy</DropdownItem>
+              <DropdownItem to="/category/snacks">Snacks</DropdownItem>
             </Dropdown>
 
             <Dropdown
-              label="Shop By Benefits"
+              label="Benefits"
               open={openDropdown === "benefits"}
-              onClick={() => toggleDropdown("benefits")}
-            >
-              <DropdownItem label="Organic" />
-              <DropdownItem label="Gluten Free" />
-              <DropdownItem label="Sugar Free" />
+              onClick={() => toggleDropdown("benefits")}>
+              <DropdownItem to="/benefits/organic">Organic</DropdownItem>
+              <DropdownItem to="/benefits/gluten-free">
+                Gluten Free
+              </DropdownItem>
+              <DropdownItem to="/benefits/sugar-free">Sugar Free</DropdownItem>
             </Dropdown>
 
-            <Dropdown
-              label="More"
-              open={openDropdown === "more"}
-              onClick={() => toggleDropdown("more")}
-            >
-              <DropdownItem label="About Us" />
-              <DropdownItem label="Contact" />
-            </Dropdown>
+            <Link to="/about" className="hover:text-green-600">
+              About
+            </Link>
           </nav>
 
-          {/* ICONS */}
+          {/* Icons */}
           <div className="flex items-center gap-4 text-xl">
-            {/* Search */}
-            <div className="relative">
-              <button onClick={() => setIsOpenSearch((p) => !p)}>
-                <FiSearch />
-              </button>
+            {/* Search Button */}
+            <button
+              onClick={() => setIsOpenSearch(!isOpenSearch)}
+              className="hover:scale-110 transition">
+              <FiSearch />
+            </button>
 
-              {isOpenSearch && (
-                <div className="absolute right-0 mt-3 w-72 bg-white shadow-xl rounded-xl p-3 z-50 animate-scale-fade">
-                  <input
-                    autoFocus
-                    type="text"
-                    placeholder="Search products..."
-                    className="w-full border rounded-full px-4 py-2 text-sm
-                    focus:outline-none focus:ring-2 focus:ring-green-600"
-                  />
-                </div>
-              )}
-            </div>
+            <Link to="/cart" className="hover:scale-110 transition">
+              <FiShoppingCart />
+            </Link>
 
-            <FiShoppingCart className="cursor-pointer" />
-            <FiUser className="cursor-pointer" />
+            <Link to="/login" className="hover:scale-110 transition">
+              <FiUser />
+            </Link>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Toggle */}
             <button
               className="md:hidden"
-              onClick={() => {
-                setMenuOpen(!menuOpen);
-                setOpenDropdown(null);
-              }}
-            >
+              onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <FiX /> : <FiMenu />}
             </button>
           </div>
         </div>
 
-        {/* ---------------- MOBILE MENU ---------------- */}
+        {/* ---------- DESKTOP SEARCH ---------- */}
+        {isOpenSearch && (
+          <div className="hidden md:block absolute right-6 top-full -mt-16 w-72 bg-transparent mr-20 rounded-xl p-3 animate-in fade-in zoom-in-95 duration-200 z-50">
+            <input
+              autoFocus
+              type="text"
+              placeholder="Search products..."
+              className="w-full border rounded-full px-4 py-2 text-sm
+              focus:ring-2 focus:ring-green-600 outline-none"
+            />
+          </div>
+        )}
+
+        {/* ---------- MOBILE SEARCH ---------- */}
+        {isOpenSearch && (
+          <div className="md:hidden bg-white border-t px-4 py-3 animate-slide-down">
+            <input
+              autoFocus
+              type="text"
+              placeholder="Search products..."
+              className="w-full border rounded-full px-4 py-2 text-sm
+              focus:ring-2 focus:ring-green-600 outline-none"
+            />
+          </div>
+        )}
+
+        {/* ---------- MOBILE MENU ---------- */}
         {menuOpen && (
-          <div className="md:hidden border-t bg-white p-4 space-y-3 text-sm animate-fade-slide">
-            <MobileDropdown title="Shop By Category">
-              <p>All Products</p>
-              <p>Fruits & Vegetables</p>
-              <p>Dairy Products</p>
-              <p>Snacks</p>
-            </MobileDropdown>
-
-            <MobileDropdown title="Shop By Benefits">
-              <p>Organic</p>
-              <p>Gluten Free</p>
-              <p>Sugar Free</p>
-            </MobileDropdown>
-
-            <MobileDropdown title="More">
-              <p>About Us</p>
-              <p>Contact</p>
-            </MobileDropdown>
+          <div className="md:hidden bg-white border-t p-4 space-y-3 animate-slide-down">
+            <MobileLink to="/" close={() => setMenuOpen(false)}>
+              Home
+            </MobileLink>
+            <MobileLink to="/products" close={() => setMenuOpen(false)}>
+              All Products
+            </MobileLink>
+            <MobileLink to="/category/fruits" close={() => setMenuOpen(false)}>
+              Fruits
+            </MobileLink>
+            <MobileLink to="/category/dairy" close={() => setMenuOpen(false)}>
+              Dairy
+            </MobileLink>
+            <MobileLink to="/about" close={() => setMenuOpen(false)}>
+              About
+            </MobileLink>
+            <MobileLink to="/contact" close={() => setMenuOpen(false)}>
+              Contact
+            </MobileLink>
           </div>
         )}
       </header>
@@ -165,39 +199,40 @@ const Navbar = () => {
   );
 };
 
-/* ---------------- COMPONENTS ---------------- */
+/* ---------- COMPONENTS ---------- */
 
 const Dropdown = ({ label, open, onClick, children }) => (
   <div className="relative">
     <button
       onClick={onClick}
-      className="flex items-center gap-1 hover:text-green-600 transition"
-    >
-      {label} <FiChevronDown />
+      className="flex items-center gap-1 hover:text-green-600">
+      {label}
+      <FiChevronDown className={`transition ${open ? "rotate-180" : ""}`} />
     </button>
 
     {open && (
-      <div className="absolute top-9 left-0 bg-white shadow-lg rounded-lg w-52 p-2 animate-fade-slide">
+      <div className="absolute mt-3 bg-white shadow-lg rounded-lg w-52 p-2 animate-scale-fade">
         {children}
       </div>
     )}
   </div>
 );
 
-const DropdownItem = ({ label }) => (
-  <a
-    href="#"
-    className="block px-3 py-2 rounded hover:bg-green-50 hover:text-green-600 transition"
-  >
-    {label}
-  </a>
+const DropdownItem = ({ to, children }) => (
+  <Link
+    to={to}
+    className="block px-3 py-2 rounded hover:bg-green-50 hover:text-green-600">
+    {children}
+  </Link>
 );
 
-const MobileDropdown = ({ title, children }) => (
-  <details>
-    <summary className="cursor-pointer font-medium">{title}</summary>
-    <div className="ml-4 mt-2 space-y-2">{children}</div>
-  </details>
+const MobileLink = ({ to, close, children }) => (
+  <Link
+    to={to}
+    onClick={close}
+    className="block py-2 border-b hover:text-green-600">
+    {children}
+  </Link>
 );
 
 export default Navbar;
